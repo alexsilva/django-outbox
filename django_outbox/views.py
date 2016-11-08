@@ -1,32 +1,93 @@
-from django.views.generic import TemplateView
-from django.http import HttpResponse
-import base64
-from .outbox import Outbox
+import re
+from os import path, listdir
+from email.parser import Parser
+from django.conf import settings
 
 
-class OutboxTemplateView(TemplateView):
-    template_name = 'django_outbox/outbox.html'
+class Outbox(object):
 
-    def get_context_data(self, **kwargs):
-        context = super(OutboxTemplateView, self).get_context_data(**kwargs)
-        context['mails'] = Outbox().all()
-        return context
+    def __init__(self):
+        self._parser = Parser()
+
+    def all(self):
+        try:
+            return list(reversed(
+                [self._message_from_file(filepath)
+                 for filepath in listdir(self.maildirectory)]))
+        except OSError:
+            return []
+
+    def get(self, id):
+        return self._message_from_file(id)
+
+    def _message_from_file(self, filepath):
+        abspath = path.join(self.maildirectory, filepath)
+        with open(abspath) as f:
+            message = self._parser.parse(f)
+            return self._convert_message(filepath, message)
+
+    def _convert_message(self, filepath, message):
+        if message.is_multipart():
+            body = {submessage.get_content_type():
+                    self._clear_content(submessage.get_payload())
+                    for submessage in message.get_payload()}
+
+        else:
+            body = {message.get_content_type():
+                    self._clear_content(message.get_payload())}
+
+        return Mail(
+            filepath,
+            message.get('Subject'),
+            message.get('From'),
+            message.get('To'),
+            message.get('Date'),
+            message.get_content_type(),
+            body)
+
+    def _clear_content(self, content):
+        return re.sub(r'\n-+', '', content)
+
+    @property
+    def maildirectory(self):
+        return settings.EMAIL_FILE_PATH
 
 
-class MailTemplateView(TemplateView):
-    template_name = 'django_outbox/mail.html'
+class Mail(object):
 
-    def render_to_response(self, context, **kwargs):
-        contenttype = context['content_type']
-        if contenttype == "text/html" or contenttype == "text/plain":
-            return super(MailTemplateView, self).render_to_response(context, **kwargs)
-        return HttpResponse(base64.b64decode(context['mail'].body[contenttype]), content_type=contenttype)
+    def __init__(self, id, subject, from_address, to, when, content_type, body):
+        self._id = id
+        self._subject = subject
+        self._from_address = from_address
+        self._to = to
+        self._when = when
+        self._content_type = content_type
+        self._body = body
 
-    def get_context_data(self, id, **kwargs):
-        context = super(MailTemplateView, self).get_context_data(**kwargs)
-        mail = Outbox().get(id)
-        context['mail'] = mail
-        context['content_type'] = self.request.GET['content_type']
-        context['content'] = mail.body[self.request.GET['content_type']]
+    @property
+    def id(self):
+        return self._id
 
-        return context
+    @property
+    def subject(self):
+        return self._subject
+
+    @property
+    def body(self):
+        return self._body
+
+    @property
+    def from_address(self):
+        return self._from_address
+
+    @property
+    def to(self):
+        return self._to
+
+    @property
+    def when(self):
+        return self._when
+
+    @property
+    def content_type(self):
+        return self._content_type
