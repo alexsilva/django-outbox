@@ -1,6 +1,6 @@
 import re
-from os import path, listdir
 from email.parser import Parser
+from os import path, listdir
 
 from django.conf import settings
 
@@ -29,13 +29,17 @@ class Outbox(object):
 
     def _convert_message(self, filepath, message):
         if message.is_multipart():
-            body = {submessage.get_content_type(): 
-                    self._clear_content(submessage.get_payload())
-                        for submessage in message.get_payload()}
-                
+            body = []
+            for submessage in message.get_payload():
+                body.append((
+                    submessage.get_content_type(),
+                    (submessage.get_filename(None), self._clear_content(submessage.get_payload()))
+                ))
         else:
-            body = {message.get_content_type(): 
-                    self._clear_content(message.get_payload())}
+            body = [(
+                message.get_content_type(),
+                (message.get_filename(None), self._clear_content(message.get_payload()))
+            )]
 
         return Mail(
                 filepath,

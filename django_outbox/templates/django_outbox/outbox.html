@@ -19,9 +19,9 @@
               {{ mail.subject }}
             </td>
             <td>
-              {% for content_type in mail.body %}
-                <a href="{% url 'mail' id=mail.id %}?content_type={{ content_type }}">
-                  {{ content_type }}
+              {% for item in mail.body %}
+                <a href="{% url 'mail' id=mail.id %}?content_type={{ item.0 }}&pos={{forloop.counter0}}">
+                {% if item.1.0 %}{{item.1.0}}{% else %}{{ item.0 }}{% endif %}<br/>
                 </a>
               {% endfor %}
             </td>
