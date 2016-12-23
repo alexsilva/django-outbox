@@ -3,6 +3,7 @@ from email.parser import Parser
 from os import path, listdir
 
 from django.conf import settings
+from django.utils.timezone import localtime
 
 
 class Outbox(object):
@@ -92,6 +93,14 @@ class Mail(object):
     @property
     def when(self):
         return self._when
+
+    @property
+    def when_local(self):
+        try:
+            from dateutil import parser
+            return localtime(parser.parse(self.when))
+        except ImportError:
+            return self.when
 
     @property
     def content_type(self):
