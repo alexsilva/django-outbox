@@ -16,20 +16,19 @@ class OutboxTemplateView(TemplateView):
 
 
 class MailTemplateView(TemplateView):
+    """Displays the contents of an e-mail message"""
     template_name = 'django_outbox/mail.html'
 
     def render_to_response(self, context, **kwargs):
-        contenttype = context['content_type']
-        if contenttype == "text/html" or contenttype == "text/plain":
+        body = context['body']
+        if body.content_type in ["text/html", "text/plain"]:
             return super(MailTemplateView, self).render_to_response(context, **kwargs)
-        return HttpResponse(base64.b64decode(context['content']), content_type=contenttype)
+        return HttpResponse(base64.b64decode(context['content']), content_type=body.content_type)
 
     def get_context_data(self, id, **kwargs):
         context = super(MailTemplateView, self).get_context_data(**kwargs)
         mail = Outbox().get(id)
+        index = int(self.request.GET.get('index', 0))
         context['mail'] = mail
-        content_type = self.request.GET['content_type']
-        context['content_type'] = content_type
-        body = dict([mail.body[int(self.request.GET.get('pos', 0))]])
-        context['content'] = body[content_type][-1]
+        context['body'] = mail.body[index]
         return context

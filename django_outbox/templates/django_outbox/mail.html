@@ -23,12 +23,12 @@
       </ul>
     </header>
     <section class="body">
-      {% if content_type == 'text/html' %}
+      {% if body.content_type == 'text/html' %}
         {% autoescape off %}
-          {{ content }}
+          {{ body.content }}
         {% endautoescape %}
       {% else %}
-        <pre>{{ content }}</pre>
+        <pre>{{ body.content }}</pre>
       {% endif %}
     </section>
   </article>

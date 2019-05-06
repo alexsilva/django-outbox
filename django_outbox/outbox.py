@@ -8,6 +8,14 @@ from django.conf import settings
 from django.utils.functional import cached_property
 
 
+class File(object):
+    """Body file"""
+    def __init__(self, filename, content, content_type):
+        self.filename = filename
+        self.content = content
+        self.content_type = content_type
+
+
 class Outbox(object):
 
     def __init__(self):
@@ -34,15 +42,13 @@ class Outbox(object):
         if message.is_multipart():
             body = []
             for submessage in message.get_payload():
-                body.append((
-                    submessage.get_content_type(),
-                    (submessage.get_filename(None), self._clear_content(submessage.get_payload()))
-                ))
+                body.append(File(submessage.get_filename(None),
+                                 self._clear_content(submessage.get_payload()),
+                                 submessage.get_content_type()))
         else:
-            body = [(
-                message.get_content_type(),
-                (message.get_filename(None), self._clear_content(message.get_payload()))
-            )]
+            body = [File(message.get_filename(None),
+                         self._clear_content(message.get_payload()),
+                         message.get_content_type())]
 
         return Mail(
                 filepath,
