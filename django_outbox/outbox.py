@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime
 import re
 from email.parser import Parser
@@ -10,10 +11,14 @@ from django.utils.functional import cached_property
 
 class File(object):
     """Body file"""
-    def __init__(self, filename, content, content_type):
+    def __init__(self, filename, content_raw, content_type):
         self.filename = filename
-        self.content = content
+        self.content_raw = content_raw
         self.content_type = content_type
+
+    @property
+    def content(self):
+        return base64.b64decode(self.content_raw)
 
 
 class Outbox(object):

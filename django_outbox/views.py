@@ -23,7 +23,7 @@ class MailTemplateView(TemplateView):
         body = context['body']
         if body.content_type in ["text/html", "text/plain"]:
             return super(MailTemplateView, self).render_to_response(context, **kwargs)
-        return HttpResponse(base64.b64decode(context['content']), content_type=body.content_type)
+        return HttpResponse(body.content, content_type=body.content_type)
 
     def get_context_data(self, id, **kwargs):
         context = super(MailTemplateView, self).get_context_data(**kwargs)
