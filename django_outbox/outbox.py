@@ -1,20 +1,22 @@
+from datetime import datetime
 import re
 from email.parser import Parser
+from email.utils import mktime_tz
 from os import path, listdir
 
 from django.conf import settings
-from django.utils.timezone import localtime
+from django.utils.functional import cached_property
 
 
 class Outbox(object):
-    
+
     def __init__(self):
         self._parser = Parser()
 
     def all(self):
         try:
             return list(reversed(
-                    [self._message_from_file(filepath) 
+                    [self._message_from_file(filepath)
                     for filepath in listdir(self.maildirectory)]))
         except OSError:
             return []
@@ -44,9 +46,9 @@ class Outbox(object):
 
         return Mail(
                 filepath,
-                message.get('Subject'), 
-                message.get('From'), 
-                message.get('To'), 
+                message.get('Subject'),
+                message.get('From'),
+                message.get('To'),
                 message.get('Date'),
                 message.get_content_type(),
                 body)
@@ -90,17 +92,20 @@ class Mail(object):
     def to(self):
         return self._to
 
-    @property
+    @cached_property
     def when(self):
-        return self._when
-
-    @property
-    def when_local(self):
+        date_str = self._when
         try:
-            from dateutil import parser
-            return localtime(parser.parse(self.when))
+            from email.utils import parsedate_to_datetime
+            date = parsedate_to_datetime(date_str)
         except ImportError:
-            return self.when
+            from email.utils import parsedate_tz
+            time_t = parsedate_tz(date_str)
+            if time_t:
+                date = datetime.fromtimestamp(mktime_tz(time_t))
+            else:
+                date = date_str
+        return date
 
     @property
     def content_type(self):
