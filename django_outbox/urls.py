@@ -1,9 +1,8 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import url
 
-from .views import OutboxTemplateView, MailTemplateView
+from django_outbox.views import OutboxTemplateView, MailTemplateView
 
-
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', OutboxTemplateView.as_view(), name='outbox'),
     url(r'^(?P<id>.+)/$', MailTemplateView.as_view(), name='mail'),
-)
+]
