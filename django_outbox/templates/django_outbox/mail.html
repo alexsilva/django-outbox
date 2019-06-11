@@ -1,23 +1,24 @@
 {% extends 'django_outbox/base.html' %}
+{% load i18n %}
 
 {% block content %}
   <article class="outbox-mail">
     <header>
       <ul>
         <li>
-          <b>Subject:</b>
+          <b>{% trans 'Subject:' %}</b>
           <span>{{ mail.subject }}</span>
         </li>
         <li>
-          <b>From:</b>
+          <b>{% trans 'From:' %}</b>
           <span>{{ mail.from_address }}</span>
         </li>
         <li>
-          <b>To:</b>
+          <b>{% trans 'To:' %}</b>
           <span>{{ mail.to }}</span>
         </li>
         <li>
-          <b>When:</b>
+          <b>{% trans 'When:' %}</b>
           <span>{{ mail.when }}</span>
         </li>
       </ul>

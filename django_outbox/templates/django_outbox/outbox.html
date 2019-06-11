@@ -1,15 +1,15 @@
 {% extends 'django_outbox/base.html' %}
-
+{% load i18n %}
 {% block content %}
   {% if mails %}
     <table class="outbox-table">
       <thead>
         <tr>
-          <th>subject</th>
+          <th>{% trans 'subject' %}</th>
           <th></th>
-          <th>from</th>
-          <th>to</th>
-          <th>when</th>
+          <th>{% trans 'from' %}</th>
+          <th>{% trans 'to' %}</th>
+          <th>{% trans 'when' %}</th>
         </tr>
       </thead>
       <tbody>

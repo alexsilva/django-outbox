@@ -1,0 +1,51 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-06-11 17:18-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: .\django_outbox\templates\django_outbox\mail.html:9
+msgid "Subject:"
+msgstr "Assunto:"
+
+#: .\django_outbox\templates\django_outbox\mail.html:13
+msgid "From:"
+msgstr "De:"
+
+#: .\django_outbox\templates\django_outbox\mail.html:17
+msgid "To:"
+msgstr "Para:"
+
+#: .\django_outbox\templates\django_outbox\mail.html:21
+msgid "When:"
+msgstr "Quando:"
+
+#: .\django_outbox\templates\django_outbox\outbox.html:8
+msgid "subject"
+msgstr "assunto"
+
+#: .\django_outbox\templates\django_outbox\outbox.html:10
+msgid "from"
+msgstr "de"
+
+#: .\django_outbox\templates\django_outbox\outbox.html:11
+msgid "to"
+msgstr "para"
+
+#: .\django_outbox\templates\django_outbox\outbox.html:12
+msgid "when"
+msgstr "quando"
