@@ -1,6 +1,7 @@
 import base64
 from datetime import datetime
 import re
+from email.header import decode_header, make_header
 from email.parser import Parser
 from email.utils import mktime_tz
 from os import path, listdir
@@ -89,7 +90,7 @@ class Mail(object):
 
     @property
     def subject(self):
-        return self._subject
+        return make_header(decode_header(self._subject))
 
     @property
     def body(self):
