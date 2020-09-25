@@ -4,3 +4,4 @@ tmp/
 django_outbox.egg-info/
 dist/
 build/
+.idea
