@@ -1,3 +1,4 @@
+# coding=utf-8
 import base64
 from datetime import datetime
 import re
@@ -7,7 +8,9 @@ from email.utils import mktime_tz
 from os import path, listdir
 
 from django.conf import settings
+from django.utils.encoding import force_str
 from django.utils.functional import cached_property
+import codecs
 
 
 class File(object):
@@ -18,8 +21,12 @@ class File(object):
         self.content_type = content_type
 
     @property
-    def content(self):
+    def content_bytes(self):
         return base64.b64decode(self.content_raw)
+
+    @property
+    def content(self):
+        return force_str(self.content_bytes, encoding=settings.DEFAULT_CHARSET)
 
 
 class Outbox(object):
@@ -40,7 +47,7 @@ class Outbox(object):
 
     def _message_from_file(self, filepath):
         abspath = path.join(self.maildirectory, filepath)
-        with open(abspath) as f:
+        with codecs.open(abspath, encoding=settings.DEFAULT_CHARSET) as f:
             message = self._parser.parse(f)
             return self._convert_message(filepath, message)
 
