@@ -42,8 +42,8 @@ class Outbox(object):
         except OSError:
             return []
 
-    def get(self, id):
-        return self._message_from_file(id)
+    def get(self, file_id):
+        return self._message_from_file(file_id)
 
     def _message_from_file(self, filepath):
         abspath = path.join(self.maildirectory, filepath)
