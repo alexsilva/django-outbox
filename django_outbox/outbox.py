@@ -64,13 +64,15 @@ class Outbox(object):
                          message.get_content_type())]
 
         return Mail(
-                filepath,
-                message.get('Subject'),
-                message.get('From'),
-                message.get('To'),
-                message.get('Date'),
-                message.get_content_type(),
-                body)
+            filepath,
+            message.get('Subject'),
+            message.get('From'),
+            message.get('To'),
+            message.get('Date'),
+            message.get_content_type(),
+            body,
+            length=len(message)
+        )
 
     def _clear_content(self, content):
         return re.sub(r'\n-+', '', content)
@@ -82,7 +84,7 @@ class Outbox(object):
 
 class Mail(object):
 
-    def __init__(self, id, subject, from_address, to, when, content_type, body):
+    def __init__(self, id, subject, from_address, to, when, content_type, body, **options):
         self._id = id
         self._subject = subject
         self._from_address = from_address
@@ -90,6 +92,10 @@ class Mail(object):
         self._when = when
         self._content_type = content_type
         self._body = body
+        self.options = options
+
+    def __len__(self):
+        return self.options.get('length', 0)
 
     @property
     def id(self):

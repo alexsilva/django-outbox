@@ -10,7 +10,7 @@ class OutboxTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(OutboxTemplateView, self).get_context_data(**kwargs)
-        context['mails'] = Outbox().all()
+        context['mails'] = [mail for mail in Outbox().all() if len(mail)]
         return context
 
 
