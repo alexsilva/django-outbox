@@ -8,7 +8,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-outbox',
-    version='0.8.0',
+    version='0.9.0',
     packages=['django_outbox'],
     include_package_data=True,
     license='MIT License',
